@@ -2,4 +2,14 @@
     <string name="app_name">Suya Liu\'s Android Labs</string>
     <string name="hello_message">Hello World!</string>
     <string name="button_message">I\'m a button</string>
+    <string name="hinttext">Write something here</string>
+
+    <string name="checkbox_check">Checkbox1</string>
+    <string name="checkbox_check2">Checkbox2</string>
+    <string name="switch_on">Switch1</string>
+    <string name="switch_off">Switch2</string>
+    <string name="radio_filled">Option1</string>
+    <string name="radio_empty">Option2</string>
+
+
 </resources>
