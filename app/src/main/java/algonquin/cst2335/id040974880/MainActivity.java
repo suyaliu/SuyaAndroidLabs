@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     });
 
+
 //        TextView mytext = findViewById(R.id.textView);
 //        Button btn =findViewById(R.id.mybutton);
 //        EditText myedit = findViewById(R.id.myedittext);
