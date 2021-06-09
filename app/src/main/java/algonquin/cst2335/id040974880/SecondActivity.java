@@ -44,6 +44,7 @@ public class SecondActivity extends AppCompatActivity {
 
         topOfScreen.setText("You typed " + emailAdress);
         Button btn1 = findViewById(R.id.callButton);
+
         btn1.setOnClickListener(clk -> {
 
             //save phone to disk
