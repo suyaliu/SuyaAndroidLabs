@@ -29,13 +29,15 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         TextView topOfScreen = findViewById(R.id.textView);
+        inputPhoneNumber = findViewById(R.id.editTextPhone);
+
         //load phone from sharedpreferences
         SharedPreferences prefs = getSharedPreferences("MyPhone", Context.MODE_PRIVATE);
         int phoneNumber = prefs.getInt("PhoneNumber", 0);
         inputPhoneNumber.setText(Integer.toString( phoneNumber ));
 
 
-        inputPhoneNumber = findViewById(R.id.editTextPhone);
+
         Intent fromPrevious = getIntent();
         String emailAdress = fromPrevious.getStringExtra("EmailAddress");
         //int age = fromPrevious.getIntExtra("Age",0);
@@ -48,7 +50,7 @@ public class SecondActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("PhoneNumber", Integer.parseInt(inputPhoneNumber.getText().toString()));
             editor.apply();
-            String callNumber = inputPhoneNumber.getText().toString();
+            int callNumber = Integer.parseInt(inputPhoneNumber.getText().toString());
 
             Intent call = new Intent(Intent.ACTION_DIAL);
             call.setData(Uri.parse("tel:" +callNumber));
