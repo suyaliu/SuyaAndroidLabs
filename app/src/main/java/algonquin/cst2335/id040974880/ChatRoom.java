@@ -36,7 +36,7 @@ public class ChatRoom extends AppCompatActivity{
 
             chatList = findViewById(R.id.myrecycler);
             chatList.setAdapter(adt);
-           LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
             chatList.setLayoutManager(layoutManager);
 
 
