@@ -1,6 +1,9 @@
 package algonquin.cst2335.id040974880;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +34,29 @@ public class MessageListFragment extends Fragment{
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HmHmss", Locale.getDefault());
     String currentDateandTime = sdf.format(new Date());
     Button send;
+    SQLiteDatabase db;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View chatLayout = inflater.inflate(R.layout.chatlayout,container,false);
 
+        MyOpenHelper opener = new MyOpenHelper(getContext());
+        // open a database
+        db = opener.getWritableDatabase();
 
+        Cursor results = db.rawQuery("Select * from " + MyOpenHelper.TABLE_NAME + ";", null);
+        int _idCol = results.getColumnIndex("_id");
+        int messageCol = results.getColumnIndex(MyOpenHelper.col_message);
+        int sendCol = results.getColumnIndex(MyOpenHelper.col_send_receive);
+        int timeCol = results.getColumnIndex(MyOpenHelper.col_time_sent);
+
+        while(results.moveToNext()) {
+            long id = results.getInt(_idCol);
+            String message = results.getString(messageCol);
+            String time = results.getString(timeCol);
+            int sendOrReceieve = results.getInt(sendCol);
+            messages.add(new ChatMessage(message, sendOrReceieve, time, id));
+        }
         chatList = chatLayout.findViewById(R.id.myrecycler);
         EditText messageTyped = chatLayout.findViewById(R.id.messageEdit);
         send =chatLayout.findViewById(R.id.sendButton);
@@ -50,13 +71,37 @@ public class MessageListFragment extends Fragment{
         chatList.setLayoutManager(layoutManager);
 
         send.setOnClickListener(clk ->{
-          ChatMessage thisMessage = new ChatMessage(messageTyped.getText().toString(),1,new Date() );
+          ChatMessage thisMessage = new ChatMessage(messageTyped.getText().toString(),1,sdf.format(new Date()) );
+
+
+            // insert into database
+            ContentValues newRow = new ContentValues();
+            newRow.put(MyOpenHelper.col_message, thisMessage.getMessage());
+            newRow.put(MyOpenHelper.col_send_receive,thisMessage.getSendOrReceive());
+            newRow.put(MyOpenHelper.col_time_sent, thisMessage.getTimeSent());
+
+            long newId = db.insert(MyOpenHelper.TABLE_NAME,MyOpenHelper.col_message, newRow);
+            thisMessage.setId(newId);
+
+
             messages.add(thisMessage);
             adt.notifyItemInserted(messages.size()-1);
             messageTyped.setText("");
         });
         receive.setOnClickListener(clk ->{
-            ChatMessage thisMessage = new ChatMessage(messageTyped.getText().toString(),1,new Date() );
+            ChatMessage thisMessage = new ChatMessage(messageTyped.getText().toString(),2,sdf.format(new Date()) );
+
+
+
+            // insert into database
+            ContentValues newRow = new ContentValues();
+            newRow.put(MyOpenHelper.col_message, thisMessage.getMessage());
+            newRow.put(MyOpenHelper.col_send_receive,thisMessage.getSendOrReceive());
+            newRow.put(MyOpenHelper.col_time_sent, thisMessage.getTimeSent());
+
+            long newId = db.insert(MyOpenHelper.TABLE_NAME,MyOpenHelper.col_message, newRow);
+            thisMessage.setId(newId);
+
             messages.add(thisMessage);
             adt.notifyItemInserted(messages.size()-1);
             messageTyped.setText("");
@@ -155,20 +200,27 @@ public   class MyChatAdapter extends  RecyclerView.Adapter<MyRowViews> {
 class ChatMessage{
     String message;
     int sendOrReceive;
-    Date timeSent;
+    String timeSent;
 long id;
 
-    public ChatMessage(String message, int sendOrReceive, Date timeSent) {
+    public ChatMessage(String message, int sendOrReceive, String timeSent) {
         this.message = message;
         this.sendOrReceive = sendOrReceive;
         this.timeSent = timeSent;
 
     }
+
+    public ChatMessage(String message, int sendOrReceive, String timeSent, long id) {
+        this.message = message;
+        this.sendOrReceive = sendOrReceive;
+        this.timeSent = timeSent;
+setId(id);
+    }
     public String getMessage() { return message; }
 
     public int getSendOrReceive() { return sendOrReceive; }
 
-    public Date getTimeSent() { return timeSent; }
+    public String getTimeSent() { return timeSent; }
 
 
     public long getId() {
