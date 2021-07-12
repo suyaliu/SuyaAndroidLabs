@@ -1,4 +1,7 @@
 package algonquin.cst2335.id040974880;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +26,11 @@ public class ChatRoom extends AppCompatActivity{
     RecyclerView chatList;
     ArrayList<ChatMessage> messages = new ArrayList<>();
     MyChatAdapter adt = new MyChatAdapter();
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HmHmss", Locale.getDefault());
     String currentDateandTime = sdf.format(new Date());
+    SQLiteDatabase db;
+
     @Override
         protected void onCreate( Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -34,6 +40,23 @@ public class ChatRoom extends AppCompatActivity{
             Button send = findViewById(R.id.sendButton);
             Button receive = findViewById(R.id.receiveButton);
 
+        MyOpenHelper opener = new MyOpenHelper(this);
+        // open a database
+        db = opener.getWritableDatabase();
+
+         Cursor results = db.rawQuery("Select * from " + MyOpenHelper.TABLE_NAME + ";", null);
+        int _idCol = results.getColumnIndex("_id");
+        int messageCol = results.getColumnIndex(MyOpenHelper.col_message);
+        int sendCol = results.getColumnIndex(MyOpenHelper.col_send_receive);
+        int timeCol = results.getColumnIndex(MyOpenHelper.col_time_sent);
+
+        while(results.moveToNext()) {
+            long id = results.getInt(_idCol);
+            String message = results.getString(messageCol);
+            String time = results.getString(timeCol);
+            int sendOrReceieve = results.getInt(sendCol);
+            messages.add(new ChatMessage(message, sendOrReceieve, time, id));
+        }
 
 
             chatList = findViewById(R.id.myrecycler);
@@ -44,17 +67,37 @@ public class ChatRoom extends AppCompatActivity{
 
 
         send.setOnClickListener(clk ->{
-            ChatMessage thisMessage = new ChatMessage(messageTyped.getText().toString(),1,new Date() );
-            messages.add(thisMessage);
-            messageTyped.setText("");
 
+
+            ChatMessage cm = new ChatMessage(messageTyped.getText().toString(),1,currentDateandTime);
+           // insert into database
+            ContentValues newRow = new ContentValues();
+            newRow.put(MyOpenHelper.col_message, cm.getMessage());
+            newRow.put(MyOpenHelper.col_send_receive,cm.getSendOrReceive());
+            newRow.put(MyOpenHelper.col_time_sent, cm.getTimeSent());
+
+            long newId = db.insert(MyOpenHelper.TABLE_NAME,MyOpenHelper.col_message, newRow);
+            cm.setId(newId);
+            messages.add(cm);
+
+            messageTyped.setText("");
             //tell the list there is a new item the end of the arraylist
             adt.notifyItemInserted(messages.size()-1);
         });
         receive.setOnClickListener(clk ->{
-            ChatMessage thisMessage = new ChatMessage(messageTyped.getText().toString(),
-                    2, new Date() );
-            messages.add(thisMessage);
+            ChatMessage cm= new ChatMessage(messageTyped.getText().toString(),
+                    2, currentDateandTime );
+            // insert into database
+            ContentValues newRow = new ContentValues();
+            newRow.put(MyOpenHelper.col_message, cm.getMessage());
+            newRow.put(MyOpenHelper.col_send_receive,cm.getSendOrReceive());
+            newRow.put(MyOpenHelper.col_time_sent, cm.getTimeSent());
+
+            //now insert
+            long newId = db.insert(MyOpenHelper.TABLE_NAME,MyOpenHelper.col_message, newRow);
+            cm.setId(newId);
+
+            messages.add(cm);
             messageTyped.setText("");
             adt.notifyItemInserted(messages.size()-1);
 
@@ -65,11 +108,11 @@ public class ChatRoom extends AppCompatActivity{
             TextView messageText ;
             TextView timeText ;
             MyChatAdapter adt ;
-            int position ;
+            int position=-1 ;
         public MyRowViews( View itemView) {
             super(itemView);
-
-            position = -1;
+            messageText = itemView.findViewById(R.id.message);
+            timeText = itemView.findViewById(R.id.time);
 
             itemView.setOnClickListener(clk ->{
                 AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
@@ -80,12 +123,21 @@ public class ChatRoom extends AppCompatActivity{
                     position = getAbsoluteAdapterPosition();
                     ChatMessage removedMessage = messages.get(position);
 
+                    //deleter from database
                     messages.remove(position);
                     adt.notifyItemRemoved(position);
+                    db.delete(MyOpenHelper.TABLE_NAME, "_id=?", new String[]{Long.toString(removedMessage.getId())});
+
                     Snackbar.make(messageText, "You deleted message #" +position,
                             Snackbar.LENGTH_LONG).setAction("Undo",click ->{
                                 messages.add(position,removedMessage);
                                 adt.notifyItemInserted(position);
+
+                                db.execSQL("Insert into " + MyOpenHelper.TABLE_NAME + " values('" + removedMessage.getId() +
+                                "','" + removedMessage.getMessage() +
+                                "','" + removedMessage.getSendOrReceive() +
+                                "','" + removedMessage.getTimeSent() + "');");
+
                     })
                             .show();
                 })
@@ -97,8 +149,7 @@ public class ChatRoom extends AppCompatActivity{
 
 
             });
-            messageText = itemView.findViewById(R.id.message);
-            timeText = itemView.findViewById(R.id.time);
+
         }
         public void setPosition(int p){position = p;}
     }
@@ -145,18 +196,27 @@ public class ChatRoom extends AppCompatActivity{
     private class ChatMessage{
         String message;
         int sendOrReceive;
-        Date timeSent;
-
-        public ChatMessage(String message, int sendOrReceive, Date timeSent) {
+        String timeSent;
+        long id;
+        public ChatMessage(String message, int sendOrReceive, String timeSent) {
             this.message = message;
             this.sendOrReceive = sendOrReceive;
             this.timeSent = timeSent;
+
+        }
+        public ChatMessage(String message, int sendOrReceive, String timeSent,long id) {
+            this.message = message;
+            this.sendOrReceive = sendOrReceive;
+            this.timeSent = timeSent;
+            setId(id);
         }
         public String getMessage() { return message; }
 
         public int getSendOrReceive() { return sendOrReceive; }
 
-        public Date getTimeSent() { return timeSent; }
+        public String getTimeSent() { return timeSent; }
+        public void setId(Long l){ id = l; }
 
+        public long getId(){ return id; }
     }
 }
