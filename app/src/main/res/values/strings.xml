@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Suya Liu\'s Android Labs</string>
-    <string name="hello_message">Type your password:</string>
-    <string name="button_message">I\'m a button</string>
+    <string name="hello_message">Enter a city name:</string>
+    <string name="button_message">Login in</string>
 </resources>
