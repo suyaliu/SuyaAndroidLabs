@@ -18,14 +18,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
@@ -46,7 +43,7 @@ public class MainActivityTest {
         //perform typing "12345" into that view, then close the keyboard.
         appCompatEditText.perform(replaceText("12345"),closeSoftKeyboard());
         //find the button
-        ViewInteraction materialButton = onView(withId(R.id.button));
+        ViewInteraction materialButton = onView(withId(R.id.forcastbutton));
         //perform clicking that button
         materialButton.perform(click());
         //find the texView
@@ -66,7 +63,7 @@ public class MainActivityTest {
         //perform: type in "password123#$*"
         appCompatEditText.perform(replaceText("password123#$*"),closeSoftKeyboard());
         //find the button
-        ViewInteraction materialButton = onView(withId(R.id.button));
+        ViewInteraction materialButton = onView(withId(R.id.forcastbutton));
         //perform: click the button
         materialButton.perform(click());
         //find the TextView
@@ -84,7 +81,7 @@ public class MainActivityTest {
         //perform: type in "PW123#$*"
         appCompatEditText.perform(replaceText("PW123#$*"),closeSoftKeyboard());
         //find the button
-        ViewInteraction materialButton = onView(withId(R.id.button));
+        ViewInteraction materialButton = onView(withId(R.id.forcastbutton));
         //perform: click the button
         materialButton.perform(click());
         //find the TextView
@@ -102,7 +99,7 @@ public class MainActivityTest {
         //perform: type in "PWord#$*"
         appCompatEditText.perform(replaceText("PWord#$*"),closeSoftKeyboard());
         //find the button
-        ViewInteraction materialButton = onView(withId(R.id.button));
+        ViewInteraction materialButton = onView(withId(R.id.forcastbutton));
         //perform: click the button
         materialButton.perform(click());
         //find the TextView
@@ -120,7 +117,7 @@ public class MainActivityTest {
         //perform: type in "PWord123"
         appCompatEditText.perform(replaceText("PWord123"),closeSoftKeyboard());
         //find the button
-        ViewInteraction materialButton = onView(withId(R.id.button));
+        ViewInteraction materialButton = onView(withId(R.id.forcastbutton));
         //perform: click the button
         materialButton.perform(click());
         //find the TextView
@@ -139,7 +136,7 @@ public class MainActivityTest {
         //perform: type in "PWord123#$*"
         appCompatEditText.perform(replaceText("PWord123#$*"),closeSoftKeyboard());
         //find the button
-        ViewInteraction materialButton = onView(withId(R.id.button));
+        ViewInteraction materialButton = onView(withId(R.id.forcastbutton));
         //perform: click the button
         materialButton.perform(click());
         //find the TextView
