@@ -1,8 +1,13 @@
 package algonquin.cst2335.id040974880;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,12 +17,19 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
+
+
+import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,26 +61,99 @@ public class MainActivity extends AppCompatActivity {
     ImageView iv ;
     Bitmap image = null;
     String description = null;
+    String cityName;
     String iconName = null;
     String current = null;
     String minTep = null;
     String maxTep = null;
     String humidity = null;
+    float oldSize = 14;
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public boolean onOptionsItemSelected( MenuItem item) {
+
+        switch (item.getItemId()){
+
+            case R.id.hide_views:
+                current.setVisibility(View.INVISIBLE);
+                maxTep.setVisibility(View.INVISIBLE);
+                minTep.setVisibiltiy(View.INVISIBLE);
+                humidity.setVisibiltiy(View.INVISIBLE);
+                description.setVisibiltiy(View.INVISIBLE);
+                iconName.setVisibiltiy(View.INVISIBLE);
+                cityText.setText("");//clear the city name
+                break;
+            case R.id.id_increase:
+                  oldSize++;
+                  current.setTextSize(oldSize);
+                  maxTep.setTextSize(oldSize);
+                  minTep.setTextSize(oldSize);
+                  humidity.setTextSize(oldSize);
+                  description.setTextSize(oldSize);
+                  iconName.setTextSize(oldSize);
+                  cityText.setTextSize(oldSize);
+                break;
+
+            case R.id.id_decrease:
+                oldSize = Float.max(oldSize-1,5);
+                break;
+            case 5://re-run a previous search:
+                 cityName = item.getTitle().toString();
+                runForecast(cityName);
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    private void runForecast(String cityName) {
+        this.cityName = cityName;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_actibity_actions,menu);
+
+        return true;
+    }
 
     EditText cityText;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
         tv = findViewById(R.id.textView);
         forecatButton = findViewById(R.id.forecastbutton);
         cityText = findViewById(R.id.editText);
 
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+
+        //navigation drawer
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, myToolbar, R.string.open, R.string.close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.popout_menu);
+        navigationView.setNavigationItemSelectedListener((item)->{
+            onOptionsItemSelected(item);// call the function for the other Toolbar
+            drawer.closeDrawer(GravityCompat.START);
+            return false;
+        });
+
+
         forecatButton.setOnClickListener(clk -> {
             String cityName = cityText.getText().toString();
+            // add items to overflow menu
+            myToolbar.getMenu().add(1,5,10,cityName).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            runForecast(cityName);
 
             AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                     .setTitle("Getting forecast")
