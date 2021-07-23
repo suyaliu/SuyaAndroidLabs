@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     Button forecatButton;
-    TextView tv;
+    TextView tv,currentView,maxView,minView,humdityView,descriptionView;
     ImageView iv ;
     Bitmap image = null;
     String description = null;
@@ -67,35 +67,46 @@ public class MainActivity extends AppCompatActivity {
     String minTep = null;
     String maxTep = null;
     String humidity = null;
+
     float oldSize = 14;
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onOptionsItemSelected( MenuItem item) {
-
+         currentView = findViewById(R.id.temp);
+         minView = findViewById(R.id.MinTemp);
+         maxView = findViewById(R.id.MaxTemp);
+         humdityView = findViewById(R.id.Humidity);
+         descriptionView = findViewById(R.id.Humidity);
+         iv = findViewById(R.id.imageView);
         switch (item.getItemId()){
 
             case R.id.hide_views:
-                current.setVisibility(View.INVISIBLE);
-                maxTep.setVisibility(View.INVISIBLE);
-                minTep.setVisibiltiy(View.INVISIBLE);
-                humidity.setVisibiltiy(View.INVISIBLE);
-                description.setVisibiltiy(View.INVISIBLE);
-                iconName.setVisibiltiy(View.INVISIBLE);
+                currentView.setVisibility(View.INVISIBLE);
+                maxView.setVisibility(View.INVISIBLE);
+                minView.setVisibility(View.INVISIBLE);
+                humdityView.setVisibility(View.INVISIBLE);
+                descriptionView.setVisibility(View.INVISIBLE);
+                iv.setVisibility(View.INVISIBLE);
                 cityText.setText("");//clear the city name
                 break;
             case R.id.id_increase:
                   oldSize++;
-                  current.setTextSize(oldSize);
-                  maxTep.setTextSize(oldSize);
-                  minTep.setTextSize(oldSize);
-                  humidity.setTextSize(oldSize);
-                  description.setTextSize(oldSize);
-                  iconName.setTextSize(oldSize);
+                  currentView.setTextSize(oldSize);
+                  maxView.setTextSize(oldSize);
+                  minView.setTextSize(oldSize);
+                humdityView.setTextSize(oldSize);
+                  descriptionView.setTextSize(oldSize);
                   cityText.setTextSize(oldSize);
                 break;
 
             case R.id.id_decrease:
                 oldSize = Float.max(oldSize-1,5);
+                currentView.setTextSize(oldSize);
+                maxView.setTextSize(oldSize);
+                minView.setTextSize(oldSize);
+                humdityView.setTextSize(oldSize);
+                descriptionView.setTextSize(oldSize);
+                cityText.setTextSize(oldSize);
                 break;
             case 5://re-run a previous search:
                  cityName = item.getTitle().toString();
@@ -124,9 +135,6 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        tv = findViewById(R.id.textView);
-        forecatButton = findViewById(R.id.forecastbutton);
-        cityText = findViewById(R.id.editText);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -135,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
 
+        tv = findViewById(R.id.textView);
+        forecatButton = findViewById(R.id.forecastbutton);
+        cityText = findViewById(R.id.editText);
         //navigation drawer
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, myToolbar, R.string.open, R.string.close);
@@ -227,26 +238,26 @@ public class MainActivity extends AppCompatActivity {
                         }}
 
                     runOnUiThread(()->{
-                        TextView tv = findViewById(R.id.temp);
-                        tv.setText("The current temperature is " +current);
-                        tv.setVisibility(View.VISIBLE);
+                        currentView = findViewById(R.id.temp);
+                        currentView.setText("The current temperature is " +current);
+                        currentView.setVisibility(View.VISIBLE);
 
-                        tv = findViewById(R.id.MinTemp);
-                        tv.setText("The min temperature is " + minTep);
-                        tv.setVisibility(View.VISIBLE);
+                        minView = findViewById(R.id.MinTemp);
+                        minView.setText("The min temperature is " + minTep);
+                        minView.setVisibility(View.VISIBLE);
 
 
-                        tv = findViewById(R.id.MaxTemp);
-                        tv.setText("The max temperature is " + maxTep);
-                        tv.setVisibility(View.VISIBLE);
+                        maxView = findViewById(R.id.MaxTemp);
+                        maxView.setText("The max temperature is " + maxTep);
+                        maxView.setVisibility(View.VISIBLE);
 
-                        tv = findViewById(R.id.Humidity);
-                        tv.setText("The Humidity is " + humidity);
-                        tv.setVisibility(View.VISIBLE);
+                        humdityView = findViewById(R.id.Humidity);
+                        humdityView.setText("The Humidity is " + humidity);
+                        humdityView.setVisibility(View.VISIBLE);
 
-                        tv = findViewById(R.id.Description);
-                        tv.setText("The Description is " + description);
-                        tv.setVisibility(View.VISIBLE);
+                        descriptionView = findViewById(R.id.Description);
+                        descriptionView.setText("The Description is " + description);
+                        descriptionView.setVisibility(View.VISIBLE);
                         iv.setImageBitmap(image);
 
                         dialog.hide();
