@@ -69,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
     String humidity = null;
 
     float oldSize = 14;
+
+    ImageView iconView;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onOptionsItemSelected( MenuItem item) {
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
          minView = findViewById(R.id.MinTemp);
          maxView = findViewById(R.id.MaxTemp);
          humdityView = findViewById(R.id.Humidity);
-         descriptionView = findViewById(R.id.Humidity);
+         descriptionView = findViewById(R.id.Description);
          iv = findViewById(R.id.imageView);
         switch (item.getItemId()){
 
@@ -86,7 +89,8 @@ public class MainActivity extends AppCompatActivity {
                 minView.setVisibility(View.INVISIBLE);
                 humdityView.setVisibility(View.INVISIBLE);
                 descriptionView.setVisibility(View.INVISIBLE);
-                iv.setVisibility(View.INVISIBLE);
+                iconView.setVisibility(View.INVISIBLE);
+              //  iv.setVisibility(View.INVISIBLE);
                 cityText.setText("");//clear the city name
                 break;
             case R.id.id_increase:
@@ -258,7 +262,12 @@ public class MainActivity extends AppCompatActivity {
                         descriptionView = findViewById(R.id.Description);
                         descriptionView.setText("The Description is " + description);
                         descriptionView.setVisibility(View.VISIBLE);
-                        iv.setImageBitmap(image);
+                        //iv.setImageBitmap(image);
+
+
+                        iconView = findViewById(R.id.icon);
+                        iconView.setImageBitmap(image);
+                        iconView.setVisibility(View.VISIBLE);
 
                         dialog.hide();
 
