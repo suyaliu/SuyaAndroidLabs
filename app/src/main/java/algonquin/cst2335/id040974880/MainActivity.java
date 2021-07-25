@@ -72,15 +72,10 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView iconView;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     @Override
     public boolean onOptionsItemSelected( MenuItem item) {
-         currentView = findViewById(R.id.temp);
-         minView = findViewById(R.id.MinTemp);
-         maxView = findViewById(R.id.MaxTemp);
-         humdityView = findViewById(R.id.Humidity);
-         descriptionView = findViewById(R.id.Description);
-         iv = findViewById(R.id.imageView);
+//
         switch (item.getItemId()){
 
             case R.id.hide_views:
@@ -123,62 +118,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void runForecast(String cityName) {
-        this.cityName = cityName;
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_actibity_actions,menu);
-
-        return true;
-    }
-
-    EditText cityText;
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Toolbar myToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-
-
-        tv = findViewById(R.id.textView);
-        forecatButton = findViewById(R.id.forecastbutton);
-        cityText = findViewById(R.id.editText);
-        //navigation drawer
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, myToolbar, R.string.open, R.string.close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = findViewById(R.id.popout_menu);
-        navigationView.setNavigationItemSelectedListener((item)->{
-            onOptionsItemSelected(item);// call the function for the other Toolbar
-            drawer.closeDrawer(GravityCompat.START);
-            return false;
-        });
-
-
-        forecatButton.setOnClickListener(clk -> {
-            String cityName = cityText.getText().toString();
-            // add items to overflow menu
-            myToolbar.getMenu().add(1,5,10,cityName).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-            runForecast(cityName);
-
-            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                    .setTitle("Getting forecast")
-                    .setMessage("we are calling people in "+cityName+" to ollk outside their windows and tell us what's the weahter like over there")
-                    .setView(new ProgressBar(MainActivity.this))
-                    .show();
-
-            //connect to serve
-
-            iv = findViewById(R.id.icon);
+        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Getting forecast")
+                .setMessage("we are calling people in "+cityName+" to ollk outside their windows and tell us what's the weahter like over there")
+                .setView(new ProgressBar(MainActivity.this))
+                .show();
+        iv = findViewById(R.id.icon);
             Executor newThread = Executors.newSingleThreadExecutor();
             newThread.execute(() -> {
                 URL url = null;
@@ -228,6 +174,13 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     }
+                    //get value to inputStreamReader
+                    String text = (new BufferedReader(
+                            new InputStreamReader(in, StandardCharsets.UTF_8)))
+                            .lines()
+                            .collect(Collectors.joining("\n"));
+
+
                     File file = new File(getFilesDir(), iconName + ".png");
                     if (file.exists()) {
                         image = BitmapFactory.decodeFile(getFilesDir()+"/"+iconName+".png");
@@ -278,12 +231,57 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_actibity_actions,menu);
+
+        return true;
+    }
+
+    EditText cityText;
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        tv = findViewById(R.id.textView);
+        forecatButton = findViewById(R.id.forecastbutton);
+        cityText = findViewById(R.id.editText);
+
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+       //navigation drawer
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, myToolbar, R.string.open, R.string.close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.popout_menu);
+        navigationView.setNavigationItemSelectedListener((item)->{
+            onOptionsItemSelected(item);// call the function for the other Toolbar
+            drawer.closeDrawer(GravityCompat.START);
+            return false;
         });
 
 
-    }
+        forecatButton.setOnClickListener(clk -> {
+            String cityName = cityText.getText().toString();
+            // add items to overflow menu
+            myToolbar.getMenu().add(1,5,10,cityName).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            runForecast(cityName);
 
+
+
+        });
+
+    }
 }
 //    String text = (new BufferedReader(
 //            new InputStreamReader(in, StandardCharsets.UTF_8)))
@@ -356,6 +354,6 @@ public class MainActivity extends AppCompatActivity {
 //                        tv.setText("The Description is " + description);
 //                        tv.setVisibility(View.VISIBLE);
 //                        iv.setImageBitmap(image);
-//                    });
+//
 
                     
