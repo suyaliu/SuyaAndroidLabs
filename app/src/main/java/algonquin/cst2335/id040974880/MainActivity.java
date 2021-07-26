@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 URL url = null;
                 try {
                     String serverURL = "https://api.openweathermap.org/data/2.5/weather?q="
-                            + URLEncoder.encode(cityText.getText().toString(), "UTF-8")
+                            + URLEncoder.encode(cityName, "UTF-8")
                             + "&appid=7e943c97096a9784391a981c4d878b22&units=metric&mode=xml";
 
                     url = new URL(serverURL);
@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         forecatButton.setOnClickListener(clk -> {
             String cityName = cityText.getText().toString();
             // add items to overflow menu
-            myToolbar.getMenu().add(1,5,10,cityName).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            myToolbar.getMenu().add(0,5,0,cityName).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             runForecast(cityName);
 
 
