@@ -162,6 +162,9 @@ public class MainActivity extends AppCompatActivity {
                         tv = findViewById(R.id.Description);
                         tv.setText("The Description is " + description);
                         tv.setVisibility(View.VISIBLE);
+
+                        iv = findViewById(R.id.icon);
+                        iv.setVisibility(View.VISIBLE);
                         iv.setImageBitmap(image);
 
                         dialog.hide();
