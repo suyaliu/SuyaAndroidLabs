@@ -75,9 +75,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected( MenuItem item) {
-//
+//onOptionsItemSelected" function. This function gets called whenever the user clicks on a MenuItem
         switch (item.getItemId()){
-
+            // get icon id
             case R.id.hide_views:
                 currentView.setVisibility(View.INVISIBLE);
                 maxView.setVisibility(View.INVISIBLE);
@@ -232,9 +232,11 @@ public class MainActivity extends AppCompatActivity {
             });
 
     }
-
+//initialize the toolbar. Type Ctrl+O and generate the function onCreateOptionsMenu.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        //similar to a LayoutInflater, used in the RecyclerView and the Fragment classes:
+        // use this inflater object to load a Menu Layout file into the Menu object that is passed into the function:
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_actibity_actions,menu);
 
@@ -253,20 +255,26 @@ public class MainActivity extends AppCompatActivity {
         tv = findViewById(R.id.textView);
         forecatButton = findViewById(R.id.forecastbutton);
         cityText = findViewById(R.id.editText);
-
+        //find the toolbar
         Toolbar myToolbar = findViewById(R.id.toolbar);
+       // load the toolbar
         setSupportActionBar(myToolbar);
 
        //navigation drawer
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        // creates a "Hamburger button" that sits in the top left part of the Toolbar:
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, myToolbar, R.string.open, R.string.close);
+        //make the button and pop-out menu synchronize so that the hamburger button show the open/close state correctly.
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        // react to when the user clicks on the popout menu
+        // finds the popout NavigationView from the drawerlayout
         NavigationView navigationView = findViewById(R.id.popout_menu);
+        //adds a selection listener to the menu
         navigationView.setNavigationItemSelectedListener((item)->{
             onOptionsItemSelected(item);// call the function for the other Toolbar
-            drawer.closeDrawer(GravityCompat.START);
+            drawer.closeDrawer(GravityCompat.START);//close the drawer
             return false;
         });
 
@@ -274,6 +282,11 @@ public class MainActivity extends AppCompatActivity {
         forecatButton.setOnClickListener(clk -> {
             String cityName = cityText.getText().toString();
             // add items to overflow menu
+            //The first parameter 0 is the groupId. We're not using menu groups here so we put 0
+            //This is the number that will be used in onOptionsItemClicked
+            //0 is the order, meaning that the menu items are actually sorted in increasing order in the toolbar
+            //The last parameter is the Title for the menu item
+            //Lastly, show up in the overflow (3 dots) menu so we set the setShowAsAction to be Never:
             myToolbar.getMenu().add(0,5,0,cityName).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             runForecast(cityName);
 
